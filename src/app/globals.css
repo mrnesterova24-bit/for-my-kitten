@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 340 15% 25%;
+    --primary: 345 80% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 95% 75%;
+    --accent: 280 65% 80%;
+    --muted: 30 40% 96%;
+    --border: 340 20% 90%;
+  }
+
+  * {
+   border-color: hsl(var(--border));
+  }
+
+  body {
+    @apply bg-gradient-to-br from-pastel-pink-50 via-pastel-blue-50 to-pastel-mint-50 text-foreground;
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  .romantic-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-rose-100 p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+  }
+
+  .romantic-button {
+    @apply px-6 py-3 bg-gradient-to-r from-rose-400 to-rose-500 text-white rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .romantic-input {
+    @apply w-full px-4 py-3 bg-white/70 border-2 border-rose-200 rounded-2xl focus:outline-none focus:border-rose-400 transition-colors duration-200;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-bold text-rose-700 mb-8 text-center;
+  }
+
+  .prose-romantic {
+    @apply prose prose-lg prose-rose max-w-none;
+    @apply prose-headings:font-display prose-headings:text-rose-700;
+    @apply prose-p:text-gray-700 prose-p:leading-relaxed;
+    @apply prose-a:text-rose-500 prose-a:no-underline hover:prose-a:text-rose-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fef2f2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #fb7185, #f43f5e);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #f43f5e, #e11d48);
+}
+
+/* Floating hearts animation */
+@keyframes floatHeart {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.floating-heart {
+  animation: floatHeart 10s linear infinite;
+}
+
+/* Shimmer effect for special elements */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
