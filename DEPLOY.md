@@ -265,3 +265,33 @@ curl -X POST "https://for-my-kitten.ru/api/deploy?secret=твой_секрет"
 - **Пароли и доступ:** логин/пароль админки хранятся в коде (`src/lib/auth.ts`). На проде лучше сменить пароль и не выкладывать репозиторий с паролями в открытый доступ.
 - **Бэкапы:** периодически копируй с сервера папки `src/data/` и `public/uploads/` — там весь контент приложения.
 - **Обновление:** после изменений в коде на сервере: `git pull` (или заново загрузи файлы), затем `npm install`, `npm run build`, `pm2 restart for-my-kitten`.
+
+---
+
+## Фото и данные на проде (почему не отображаются фото)
+
+После `git pull` папки `src/data/` и `public/uploads/` подменяются версией из репозитория. В репо нет загрузок (`public/uploads` в .gitignore), а JSON из репо может быть пустым — поэтому список фото и сами файлы на проде «пропадают».
+
+**Что сделать один раз на сервере:**
+
+1. **Данные (JSON) вне репо** — чтобы `git pull` их не затирал:
+   ```bash
+   mkdir -p /var/www/for-my-kitten-data
+   cp -r /var/www/for-my-kitten/src/data/* /var/www/for-my-kitten-data/ 2>/dev/null || true
+   ```
+   В панели reg.ru или в systemd/PM2 задай переменную окружения для приложения:
+   ```bash
+   export DATA_DIR=/var/www/for-my-kitten-data
+   ```
+   Перезапусти приложение (`pm2 restart for-my-kitten`). Дальше все JSON (в т.ч. секретная комната) будут читаться и сохраняться в `/var/www/for-my-kitten-data/`.
+
+2. **Загрузки (фото) вне репо** — чтобы папка с фото не затиралась при `git pull`:
+   ```bash
+   mkdir -p /var/www/for-my-kitten-data/uploads
+   cp -r /var/www/for-my-kitten/public/uploads/. /var/www/for-my-kitten-data/uploads/ 2>/dev/null || true
+   rm -rf /var/www/for-my-kitten/public/uploads
+   ln -s /var/www/for-my-kitten-data/uploads /var/www/for-my-kitten/public/uploads
+   ```
+   После этого загрузки через сайт попадают в `/var/www/for-my-kitten-data/uploads/`, а раздача по адресу `/uploads/...` по‑прежнему идёт из `public/uploads` (симлинк).
+
+После этих шагов загруженные на проде фото и данные перестанут пропадать при деплое.

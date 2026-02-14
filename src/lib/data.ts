@@ -59,8 +59,10 @@ export interface Ritual {
   updatedAt?: string;
 }
 
-// Data file paths
-const dataDir = path.join(process.cwd(), 'src', 'data');
+// Data file paths: на проде задай DATA_DIR вне репозитория, чтобы git pull не затирал данные
+const dataDir = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(process.cwd(), 'src', 'data');
 
 const ensureDataDir = () => {
   if (!fs.existsSync(dataDir)) {

@@ -51,7 +51,7 @@ export default function HomeContent() {
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto px-2">
-            Это место создано, чтобы ты открывал и чувствовал: я с тобой. Здесь наши мемы, мои напоминания, твоя поддержка и немного моей любви в коде.
+            Это место создано, чтобы ты открывал и чувствовал: я с тобой. Здесь наши мемы, поддержка и немного моей любви )
           </p>
         </div>
 
