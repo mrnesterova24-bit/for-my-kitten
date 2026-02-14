@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   title: 'Котёнок, я здесь',
   description: 'A space of love, support, and connection',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
   robots: {
     index: false,
