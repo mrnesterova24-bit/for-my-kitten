@@ -4,7 +4,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Котёнок, я здесь',
-  description: 'A space of love, support, and connection',
+  description: 'Этот сервис сделан с огромной любовью к тебе, заходи)',
   icons: {
     icon: '/favicon.png',
     apple: '/favicon.png',
