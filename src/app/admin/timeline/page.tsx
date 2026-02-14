@@ -2,18 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { TimelineEvent } from '@/types';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiClock } from 'react-icons/fi';
@@ -37,12 +25,8 @@ export default function AdminTimelinePage() {
 
   const fetchEvents = async () => {
     try {
-      const q = query(collection(db, 'timeline'), orderBy('order', 'asc'));
-      const snapshot = await getDocs(q);
-      const eventsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as TimelineEvent[];
+      const response = await fetch('/api/timeline');
+      const eventsData = await response.json();
       setEvents(eventsData);
     } catch (error) {
       console.error('Error fetching timeline events:', error);
@@ -58,11 +42,16 @@ export default function AdminTimelinePage() {
     }
 
     try {
-      await addDoc(collection(db, 'timeline'), {
-        ...formData,
-        order: parseInt(formData.order.toString()),
-        createdAt: Timestamp.now(),
+      const response = await fetch('/api/timeline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          order: parseInt(formData.order.toString()),
+          createdAt: new Date().toISOString(),
+        }),
       });
+      const newEvent = await response.json();
       setIsCreating(false);
       setFormData({ date: '', title: '', description: '', imageUrl: '', order: 0 });
       fetchEvents();
@@ -79,11 +68,17 @@ export default function AdminTimelinePage() {
     }
 
     try {
-      await updateDoc(doc(db, 'timeline', editingEvent.id), {
-        ...formData,
-        order: parseInt(formData.order.toString()),
-        updatedAt: Timestamp.now(),
+      const response = await fetch('/api/timeline', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingEvent.id,
+          ...formData,
+          order: parseInt(formData.order.toString()),
+          updatedAt: new Date().toISOString(),
+        }),
       });
+      const updatedEvent = await response.json();
       setEditingEvent(null);
       setFormData({ date: '', title: '', description: '', imageUrl: '', order: 0 });
       fetchEvents();
@@ -97,7 +92,7 @@ export default function AdminTimelinePage() {
     if (!confirm('Ты уверена, что хочешь удалить это событие?')) return;
 
     try {
-      await deleteDoc(doc(db, 'timeline', id));
+      await fetch(`/api/timeline?id=${id}`, { method: 'DELETE' });
       fetchEvents();
     } catch (error) {
       console.error('Error deleting timeline event:', error);

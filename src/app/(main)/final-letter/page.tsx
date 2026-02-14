@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { collection, getDocs, limit, query } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { FinalLetter } from '@/types';
 import { FiFeather, FiHeart } from 'react-icons/fi';
 
@@ -14,11 +12,10 @@ export default function FinalLetterPage() {
   useEffect(() => {
     const fetchLetter = async () => {
       try {
-        const q = query(collection(db, 'finalLetter'), limit(1));
-        const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          const doc = snapshot.docs[0];
-          setLetter({ id: doc.id, ...doc.data() } as FinalLetter);
+        const response = await fetch('/api/final-letter');
+        const letterData = await response.json();
+        if (letterData) {
+          setLetter(letterData);
         }
       } catch (error) {
         console.error('Error fetching final letter:', error);
@@ -46,7 +43,7 @@ export default function FinalLetterPage() {
           >
             <FiFeather className="text-white text-4xl" />
           </motion.div>
-          <h1 className="section-title text-amber-700">Главное письмо</h1>
+          <h1 className="section-title text-pastel-pink-700">Главное напутствие</h1>
           <p className="text-xl text-gray-600 italic">
             Самые важные слова, написанные от моего сердца к твоему
           </p>
@@ -65,7 +62,7 @@ export default function FinalLetterPage() {
           >
             {/* Letter Header */}
             <div className="text-center mb-8 pb-6 border-b-2 border-amber-200">
-              <p className="text-gray-500 italic mb-2">Моему дорогому Ришату,</p>
+              <p className="text-gray-500 italic mb-2">Моему дорогому Котёнку,</p>
               <div className="flex justify-center gap-2">
                 <FiHeart className="text-rose-400 animate-pulse-soft" />
                 <FiHeart className="text-rose-400 animate-pulse-soft animation-delay-200" />
@@ -88,7 +85,7 @@ export default function FinalLetterPage() {
                 Со всей любовью в моем сердце,
               </p>
               <p className="text-2xl font-script text-rose-600 mb-4">
-                Навсегда твой ♥
+                Навсегда твой котёнок ♥
               </p>
               <div className="flex justify-center gap-2">
                 <span className="text-3xl animate-float">💕</span>

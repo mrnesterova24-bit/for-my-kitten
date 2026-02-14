@@ -2,19 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { FeelingArticle } from '@/types';
+import { Feeling } from '@/types';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiBookOpen } from 'react-icons/fi';
 
@@ -28,14 +16,14 @@ const emotionTypes = [
 ];
 
 export default function AdminFeelingsPage() {
-  const [feelings, setFeelings] = useState<FeelingArticle[]>([]);
+  const [feelings, setFeelings] = useState<Feeling[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingFeeling, setEditingFeeling] = useState<FeelingArticle | null>(null);
+  const [editingFeeling, setEditingFeeling] = useState<Feeling | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    emotionType: 'happy' as FeelingArticle['emotionType'],
+    emotionType: 'happy',
   });
 
   useEffect(() => {
@@ -44,13 +32,9 @@ export default function AdminFeelingsPage() {
 
   const fetchFeelings = async () => {
     try {
-      const q = query(collection(db, 'feelings'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const feelingsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as FeelingArticle[];
-      setFeelings(feelingsData);
+      const res = await fetch('/api/feelings');
+      const data = await res.json();
+      setFeelings(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching feelings:', error);
     } finally {
@@ -65,9 +49,14 @@ export default function AdminFeelingsPage() {
     }
 
     try {
-      await addDoc(collection(db, 'feelings'), {
-        ...formData,
-        createdAt: Timestamp.now(),
+      await fetch('/api/feelings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }),
       });
       setIsCreating(false);
       setFormData({ title: '', content: '', emotionType: 'happy' });
@@ -85,9 +74,14 @@ export default function AdminFeelingsPage() {
     }
 
     try {
-      await updateDoc(doc(db, 'feelings', editingFeeling.id), {
-        ...formData,
-        updatedAt: Timestamp.now(),
+      await fetch('/api/feelings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingFeeling.id,
+          ...formData,
+          updatedAt: new Date().toISOString(),
+        }),
       });
       setEditingFeeling(null);
       setFormData({ title: '', content: '', emotionType: 'happy' });
@@ -102,7 +96,7 @@ export default function AdminFeelingsPage() {
     if (!confirm('Ты уверена, что хочешь удалить эту запись?')) return;
 
     try {
-      await deleteDoc(doc(db, 'feelings', id));
+      await fetch(`/api/feelings?id=${id}`, { method: 'DELETE' });
       fetchFeelings();
     } catch (error) {
       console.error('Error deleting feeling:', error);
@@ -110,7 +104,7 @@ export default function AdminFeelingsPage() {
     }
   };
 
-  const startEdit = (feeling: FeelingArticle) => {
+  const startEdit = (feeling: Feeling) => {
     setEditingFeeling(feeling);
     setFormData({
       title: feeling.title,
@@ -175,7 +169,7 @@ export default function AdminFeelingsPage() {
                   <select
                     value={formData.emotionType}
                     onChange={(e) =>
-                      setFormData({ ...formData, emotionType: e.target.value as FeelingArticle['emotionType'] })
+                      setFormData({ ...formData, emotionType: e.target.value })
                     }
                     className="romantic-input"
                   >

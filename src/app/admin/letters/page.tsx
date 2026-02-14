@@ -2,18 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Letter } from '@/types';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX } from 'react-icons/fi';
@@ -43,13 +31,9 @@ export default function AdminLettersPage() {
 
   const fetchLetters = async () => {
     try {
-      const q = query(collection(db, 'letters'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const lettersData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Letter[];
-      setLetters(lettersData);
+      const res = await fetch('/api/letters');
+      const data = await res.json();
+      setLetters(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching letters:', error);
     } finally {
@@ -64,10 +48,10 @@ export default function AdminLettersPage() {
     }
 
     try {
-      await addDoc(collection(db, 'letters'), {
-        ...formData,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+      await fetch('/api/letters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
       setIsCreating(false);
       setFormData({ category: 'sad', title: '', content: '' });
@@ -85,9 +69,10 @@ export default function AdminLettersPage() {
     }
 
     try {
-      await updateDoc(doc(db, 'letters', editingLetter.id), {
-        ...formData,
-        updatedAt: Timestamp.now(),
+      await fetch('/api/letters', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editingLetter.id, ...formData }),
       });
       setEditingLetter(null);
       setFormData({ category: 'sad', title: '', content: '' });
@@ -102,7 +87,7 @@ export default function AdminLettersPage() {
     if (!confirm('Ты уверена, что хочешь удалить это письмо?')) return;
 
     try {
-      await deleteDoc(doc(db, 'letters', id));
+      await fetch(`/api/letters?id=${id}`, { method: 'DELETE' });
       fetchLetters();
     } catch (error) {
       console.error('Error deleting letter:', error);
@@ -133,10 +118,10 @@ export default function AdminLettersPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-display font-bold text-purple-700 mb-2">
-                Manage Letters
+                Мысли и напутствия
               </h1>
               <p className="text-gray-600">
-                Create and edit letters for different moments
+                Создание и редактирование записей для разных моментов
               </p>
             </div>
             <button

@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { CrisisSupport } from '@/types';
-import { FiHeart, FiAlertCircle, FiArrowLeft } from 'react-icons/fi';
+import { FiHeart, FiArrowLeft } from 'react-icons/fi';
 
 export default function CrisisSupportPage() {
   const [messages, setMessages] = useState<CrisisSupport[]>([]);
@@ -15,12 +13,8 @@ export default function CrisisSupportPage() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const q = query(collection(db, 'crisis'), orderBy('order', 'asc'));
-        const snapshot = await getDocs(q);
-        const messagesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as CrisisSupport[];
+        const response = await fetch('/api/crisis');
+        const messagesData = await response.json();
         setMessages(messagesData);
       } catch (error) {
         console.error('Error fetching crisis messages:', error);
@@ -61,31 +55,6 @@ export default function CrisisSupportPage() {
             Когда становится трудно, помни — ты не один. 
             Я всегда здесь, и эти слова написаны с любовью и заботой.
           </p>
-        </motion.div>
-
-        {/* Emergency Note */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="romantic-card bg-red-50 border-red-200 mb-8"
-        >
-          <div className="flex items-start gap-4">
-            <FiAlertCircle className="text-red-500 text-2xl flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="text-lg font-semibold text-red-800 mb-2">
-                Если ты в непосредственной опасности:
-              </h3>
-              <p className="text-red-700 mb-2">
-                Пожалуйста, немедленно свяжись со службой экстренной помощи или кризисной линией:
-              </p>
-              <ul className="text-red-700 space-y-1 text-sm">
-                <li>• Экстренная помощь: 112 (Россия/СНГ)</li>
-                <li>• Телефон доверия: 8-800-2000-122 (бесплатно)</li>
-                <li>• Психологическая помощь: 051 (с городского)</li>
-              </ul>
-            </div>
-          </div>
         </motion.div>
 
         {/* Messages List or Detail */}

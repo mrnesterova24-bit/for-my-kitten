@@ -7,12 +7,9 @@ import {
   FiMail,
   FiHeart,
   FiBookOpen,
-  FiClock,
-  FiStar,
-  FiGift,
   FiLock,
-  FiSmile,
-  FiMapPin,
+  FiImage,
+  FiMessageCircle,
   FiAlertCircle,
   FiFeather,
   FiSun,
@@ -27,14 +24,28 @@ const adminSections = [
     description: 'Управление ежедневными сообщениями',
   },
   {
-    title: 'Письма',
+    title: 'Мемы',
+    icon: FiImage,
+    href: '/admin/memes',
+    color: 'from-pastel-mint-400 to-pastel-mint-500',
+    description: 'Общие мемы',
+  },
+  {
+    title: 'Каламбуры',
+    icon: FiMessageCircle,
+    href: '/admin/puns',
+    color: 'from-pastel-pink-400 to-pastel-pink-500',
+    description: 'Мои каламбуры и шутки',
+  },
+  {
+    title: 'Мысли и напутствия',
     icon: FiMail,
     href: '/admin/letters',
     color: 'from-blue-400 to-blue-500',
-    description: 'Создание и редактирование писем',
+    description: 'Создание и редактирование мыслей и напутствий',
   },
   {
-    title: 'Почему ты важен',
+    title: 'Почему ты самый лучший',
     icon: FiHeart,
     href: '/admin/reasons',
     color: 'from-rose-400 to-rose-500',
@@ -48,27 +59,6 @@ const adminSections = [
     description: 'Написать об эмоциях',
   },
   {
-    title: 'Наша история',
-    icon: FiClock,
-    href: '/admin/timeline',
-    color: 'from-teal-400 to-teal-500',
-    description: 'Построить события таймлайна',
-  },
-  {
-    title: 'Наше будущее',
-    icon: FiStar,
-    href: '/admin/future',
-    color: 'from-indigo-400 to-indigo-500',
-    description: 'Поделиться мечтами и планами',
-  },
-  {
-    title: 'Сюрпризы',
-    icon: FiGift,
-    href: '/admin/surprises',
-    color: 'from-pink-400 to-pink-500',
-    description: 'Запланировать сюрпризы',
-  },
-  {
     title: 'Секретная комната',
     icon: FiLock,
     href: '/admin/secret-room',
@@ -76,32 +66,18 @@ const adminSections = [
     description: 'Приватный контент',
   },
   {
-    title: 'Наши ритуалы',
-    icon: FiSmile,
-    href: '/admin/rituals',
-    color: 'from-green-400 to-green-500',
-    description: 'Документировать традиции',
-  },
-  {
-    title: 'Сообщения о разлуке',
-    icon: FiMapPin,
-    href: '/admin/distance',
-    color: 'from-cyan-400 to-cyan-500',
-    description: 'Сообщения о расстоянии',
-  },
-  {
-    title: 'Поддержка в кризис',
+    title: 'Если трудно',
     icon: FiAlertCircle,
     href: '/admin/crisis',
     color: 'from-red-400 to-red-500',
-    description: 'Экстренная поддержка',
+    description: 'Поддержка в кризис',
   },
   {
-    title: 'Главное письмо',
+    title: 'Главное напутствие',
     icon: FiFeather,
     href: '/admin/final-letter',
     color: 'from-amber-400 to-amber-500',
-    description: 'Основное письмо',
+    description: 'Основное напутствие',
   },
 ];
 
@@ -119,7 +95,7 @@ export default function AdminPage() {
               Панель управления
             </h1>
             <p className="text-xl text-gray-600">
-              Управление всем контентом для пространства Ришата
+              Здесь ты редактируешь весь контент
             </p>
           </motion.div>
 
@@ -169,10 +145,10 @@ export default function AdminPage() {
             </h2>
             <ul className="space-y-2 text-gray-700">
               <li>• Используй навигацию для доступа к различным разделам контента</li>
-              <li>• Все изменения автоматически сохраняются в Firebase</li>
-              <li>• Изображения хранятся в Firebase Storage</li>
-              <li>• Ты можешь просматривать контент так, как его видит Ришат</li>
-              <li>• Планируй сюрпризы на конкретные даты</li>
+              <li>• Все изменения сохраняются в файлах в папке src/data</li>
+              <li>• Изображения: вставляй ссылки на картинки (URL)</li>
+              <li>• Можешь открыть сайт и посмотреть, как всё выглядит для пользователя</li>
+              <li>• Мемы и каламбуры добавляются через соответствующие разделы</li>
             </ul>
           </motion.div>
         </div>

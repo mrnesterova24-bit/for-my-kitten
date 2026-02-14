@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Letter } from '@/types';
 import { FiChevronRight } from 'react-icons/fi';
 
@@ -54,15 +52,8 @@ export default function LettersPage() {
   const fetchLetters = async (category: string) => {
     setLoading(true);
     try {
-      const q = query(
-        collection(db, 'letters'),
-        where('category', '==', category)
-      );
-      const snapshot = await getDocs(q);
-      const lettersData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Letter[];
+      const response = await fetch(`/api/letters?category=${category}`);
+      const lettersData = await response.json();
       setLetters(lettersData);
     } catch (error) {
       console.error('Error fetching letters:', error);
@@ -95,7 +86,7 @@ export default function LettersPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="section-title">Письма от меня</h1>
+          <h1 className="section-title text-pastel-pink-700">Мысли и напутствия</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Слова, написанные с любовью, ждущие моментов, когда они тебе нужны больше всего
           </p>

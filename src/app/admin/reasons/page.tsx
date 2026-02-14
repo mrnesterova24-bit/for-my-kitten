@@ -2,18 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Reason } from '@/types';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiHeart } from 'react-icons/fi';
@@ -35,13 +23,9 @@ export default function AdminReasonsPage() {
 
   const fetchReasons = async () => {
     try {
-      const q = query(collection(db, 'reasons'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const reasonsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Reason[];
-      setReasons(reasonsData);
+      const res = await fetch('/api/reasons');
+      const data = await res.json();
+      setReasons(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching reasons:', error);
     } finally {
@@ -56,9 +40,13 @@ export default function AdminReasonsPage() {
     }
 
     try {
-      await addDoc(collection(db, 'reasons'), {
-        ...formData,
-        createdAt: Timestamp.now(),
+      await fetch('/api/reasons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          createdAt: new Date().toISOString(),
+        }),
       });
       setIsCreating(false);
       setFormData({ title: '', description: '', imageUrl: '' });
@@ -76,9 +64,14 @@ export default function AdminReasonsPage() {
     }
 
     try {
-      await updateDoc(doc(db, 'reasons', editingReason.id), {
-        ...formData,
-        updatedAt: Timestamp.now(),
+      await fetch('/api/reasons', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingReason.id,
+          ...formData,
+          updatedAt: new Date().toISOString(),
+        }),
       });
       setEditingReason(null);
       setFormData({ title: '', description: '', imageUrl: '' });
@@ -93,7 +86,7 @@ export default function AdminReasonsPage() {
     if (!confirm('Ты уверена, что хочешь удалить эту причину?')) return;
 
     try {
-      await deleteDoc(doc(db, 'reasons', id));
+      await fetch(`/api/reasons?id=${id}`, { method: 'DELETE' });
       fetchReasons();
     } catch (error) {
       console.error('Error deleting reason:', error);
@@ -124,10 +117,10 @@ export default function AdminReasonsPage() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-4xl font-display font-bold text-rose-700 mb-2">
-                Почему ты важен
+                Почему ты самый лучший
               </h1>
               <p className="text-gray-600">
-                Карточки с причинами, почему Ришат важен
+                Редактирование карточек с причинами
               </p>
             </div>
             <button

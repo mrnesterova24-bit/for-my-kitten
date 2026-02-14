@@ -2,18 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  Timestamp,
-  query,
-  orderBy,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { FutureDream } from '@/types';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiStar } from 'react-icons/fi';
@@ -44,13 +32,9 @@ export default function AdminFuturePage() {
 
   const fetchDreams = async () => {
     try {
-      const q = query(collection(db, 'future'), orderBy('order', 'asc'));
-      const snapshot = await getDocs(q);
-      const dreamsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as FutureDream[];
-      setDreams(dreamsData);
+      const res = await fetch('/api/future');
+      const data = await res.json();
+      setDreams(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching future dreams:', error);
     } finally {
@@ -65,10 +49,14 @@ export default function AdminFuturePage() {
     }
 
     try {
-      await addDoc(collection(db, 'future'), {
-        ...formData,
-        order: parseInt(formData.order.toString()),
-        createdAt: Timestamp.now(),
+      await fetch('/api/future', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          order: Number(formData.order),
+          createdAt: new Date().toISOString(),
+        }),
       });
       setIsCreating(false);
       setFormData({ title: '', description: '', category: 'dreams', imageUrl: '', order: 0 });
@@ -86,10 +74,15 @@ export default function AdminFuturePage() {
     }
 
     try {
-      await updateDoc(doc(db, 'future', editingDream.id), {
-        ...formData,
-        order: parseInt(formData.order.toString()),
-        updatedAt: Timestamp.now(),
+      await fetch('/api/future', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingDream.id,
+          ...formData,
+          order: Number(formData.order),
+          updatedAt: new Date().toISOString(),
+        }),
       });
       setEditingDream(null);
       setFormData({ title: '', description: '', category: 'dreams', imageUrl: '', order: 0 });
@@ -104,7 +97,7 @@ export default function AdminFuturePage() {
     if (!confirm('Ты уверена, что хочешь удалить эту мечту?')) return;
 
     try {
-      await deleteDoc(doc(db, 'future', id));
+      await fetch(`/api/future?id=${id}`, { method: 'DELETE' });
       fetchDreams();
     } catch (error) {
       console.error('Error deleting future dream:', error);

@@ -2,24 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { FeelingArticle } from '@/types';
+import { Feeling } from '@/types';
 import { FiBookOpen, FiAlertCircle } from 'react-icons/fi';
 
 export default function MyFeelingsPage() {
-  const [feelings, setFeelings] = useState<FeelingArticle[]>([]);
+  const [feelings, setFeelings] = useState<Feeling[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeelings = async () => {
       try {
-        const q = query(collection(db, 'feelings'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const feelingsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as FeelingArticle[];
+        const response = await fetch('/api/feelings');
+        const feelingsData = await response.json();
         setFeelings(feelingsData);
       } catch (error) {
         console.error('Error fetching feelings:', error);

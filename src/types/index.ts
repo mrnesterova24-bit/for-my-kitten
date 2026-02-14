@@ -1,5 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
-
 export type UserRole = 'admin' | 'user';
 
 export interface User {
@@ -7,7 +5,7 @@ export interface User {
   email: string;
   role: UserRole;
   displayName?: string;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface Letter {
@@ -15,8 +13,8 @@ export interface Letter {
   category: 'sad' | 'doubt' | 'distance' | 'argument' | 'happy';
   title: string;
   content: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ReasonCard {
@@ -24,7 +22,7 @@ export interface ReasonCard {
   title: string;
   description: string;
   order: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface Reason {
@@ -32,17 +30,17 @@ export interface Reason {
   title: string;
   description: string;
   imageUrl?: string;
-  createdAt: Timestamp;
-  updatedAt?: Timestamp;
+  createdAt: string;
+  updatedAt?: string;
 }
 
-export interface FeelingArticle {
+export interface Feeling {
   id: string;
   title: string;
   content: string;
   emotionType: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface TimelineEvent {
@@ -52,7 +50,7 @@ export interface TimelineEvent {
   description: string;
   imageUrl?: string;
   order: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface FutureDream {
@@ -62,7 +60,7 @@ export interface FutureDream {
   category: string;
   imageUrl?: string;
   order: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface Surprise {
@@ -71,11 +69,11 @@ export interface Surprise {
   content: string;
   imageUrl?: string;
   videoUrl?: string;
-  unlockDate?: Timestamp;
+  unlockDate?: string;
   isUnlocked: boolean;
   clickCount?: number;
   clicksToUnlock?: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface SecretRoomContent {
@@ -83,8 +81,13 @@ export interface SecretRoomContent {
   title: string;
   content: string;
   mediaUrls: string[];
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface SecretRoomPhoto {
+  id: string;
+  url: string;
 }
 
 export interface Ritual {
@@ -101,7 +104,7 @@ export interface DistanceMessage {
   title: string;
   content: string;
   order: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface CrisisSupport {
@@ -110,13 +113,13 @@ export interface CrisisSupport {
   content: string;
   severity: 'mild' | 'moderate' | 'severe';
   order: number;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export interface FinalLetter {
   id: string;
   content: string;
-  lastUpdated: Timestamp;
+  lastUpdated: string;
 }
 
 export interface DailyQuote {
@@ -124,6 +127,25 @@ export interface DailyQuote {
   quote: string;
   author?: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Meme {
+  id: string;
+  type: 'image' | 'reel';
+  title?: string;
+  caption?: string;
+  imageUrl?: string;
+  reelUrl?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Pun {
+  id: string;
+  text: string;
+  category?: string;
   createdAt: string;
   updatedAt?: string;
 }
