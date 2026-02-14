@@ -1,14 +1,43 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Preloader() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const showedOnce = useRef(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(false), 2200);
-    return () => clearTimeout(t);
+    // Показывать прелоадер только при первой загрузке и только если она дольше 2 секунд
+    if (showedOnce.current) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const hide = () => {
+      if (timer) clearTimeout(timer);
+      setVisible(false);
+      showedOnce.current = true;
+    };
+
+    timer = setTimeout(() => {
+      timer = null;
+      setVisible(true);
+    }, 2000);
+
+    let fallback: ReturnType<typeof setTimeout> | null = null;
+    const onLoad = () => {
+      if (fallback) clearTimeout(fallback);
+      hide();
+    };
+    window.addEventListener('load', onLoad);
+    if (document.readyState === 'complete') onLoad();
+
+    fallback = setTimeout(onLoad, 12000);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (fallback) clearTimeout(fallback);
+      window.removeEventListener('load', onLoad);
+    };
   }, []);
 
   return (
