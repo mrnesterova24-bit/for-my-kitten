@@ -52,6 +52,9 @@ export default function SecretRoomPage() {
     return out;
   };
 
+  const toImageUrl = (url: string) =>
+    url.startsWith('/uploads/') ? url.replace('/uploads/', '/api/uploads/') : url;
+
   const fetchPhotos = async () => {
     setLoading(true);
     try {
@@ -165,7 +168,7 @@ export default function SecretRoomPage() {
                       onClick={() => setLightboxIndex(idx)}
                     >
                       <img
-                        src={photo.url}
+                        src={toImageUrl(photo.url)}
                         alt=""
                         className="w-full h-full object-cover cursor-pointer"
                       />
@@ -235,7 +238,7 @@ export default function SecretRoomPage() {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                src={photos[lightboxIndex].url}
+                src={toImageUrl(photos[lightboxIndex].url)}
                 alt="Фото"
                 className="max-w-full max-h-[calc(100vh-2rem)] w-auto h-auto object-contain"
                 onClick={(e) => e.stopPropagation()}

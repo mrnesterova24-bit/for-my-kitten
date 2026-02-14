@@ -20,7 +20,11 @@ function safeName(original: string): string {
 export async function GET() {
   try {
     const photos = getSecretRoomPhotos();
-    return NextResponse.json(photos);
+    const withApiUrls = photos.map((p) => ({
+      ...p,
+      url: p.url.startsWith('/uploads/') ? p.url.replace('/uploads/', '/api/uploads/') : p.url,
+    }));
+    return NextResponse.json(withApiUrls);
   } catch (error) {
     console.error('Error fetching secret room photos:', error);
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });

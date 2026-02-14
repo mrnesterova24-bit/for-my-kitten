@@ -16,6 +16,9 @@ export default function AdminSecretRoomPage() {
     fetchPhotos();
   }, []);
 
+  const toImageUrl = (url: string) =>
+    url.startsWith('/uploads/') ? url.replace('/uploads/', '/api/uploads/') : url;
+
   const fetchPhotos = async () => {
     try {
       const res = await fetch('/api/secret-room');
@@ -123,7 +126,7 @@ export default function AdminSecretRoomPage() {
                   className="relative group aspect-square rounded-xl overflow-hidden shadow-md"
                 >
                   <img
-                    src={photo.url}
+                    src={toImageUrl(photo.url)}
                     alt=""
                     className="w-full h-full object-cover"
                   />
