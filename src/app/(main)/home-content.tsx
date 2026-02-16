@@ -11,7 +11,6 @@ import {
   FiImage,
   FiMessageCircle,
   FiMail,
-  FiAlertCircle,
 } from 'react-icons/fi';
 
 export default function HomeContent() {
@@ -23,8 +22,16 @@ export default function HomeContent() {
       try {
         const res = await fetch('/api/daily-quotes');
         const quotes: DailyQuote[] = await res.json();
-        const activeQuote = quotes.find(q => q.isActive) || quotes[0] || null;
-        setQuote(activeQuote);
+        const activeQuotes = quotes.filter(q => q.isActive);
+        if (activeQuotes.length === 0) {
+          setQuote(quotes[0] || null);
+          return;
+        }
+        // Разный цитат каждый день: индекс по дате
+        const now = new Date();
+        const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+        const index = dayOfYear % activeQuotes.length;
+        setQuote(activeQuotes[index]);
       } catch (error) {
         console.error('Error fetching daily quote:', error);
       } finally {
@@ -92,30 +99,30 @@ export default function HomeContent() {
 
         {/* Quick Navigation Cards */}
         <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-          <a href="/memes" className="card group cursor-pointer block p-4 sm:p-6">
+          <a href="/why-you-matter" className="card group cursor-pointer block p-4 sm:p-6">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-pastel-mint-400 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
-                <FiImage className="text-white text-xl sm:text-2xl" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-pastel-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
+                <FiHeart className="text-white text-xl sm:text-2xl" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-base sm:text-xl font-semibold text-gray-700 mb-0.5 sm:mb-1">
-                  Общие мемы
+                  Почему ты лучший
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm">Наши общие мемы</p>
+                <p className="text-gray-600 text-xs sm:text-sm">Всё, за что я тебя люблю</p>
               </div>
             </div>
           </a>
 
-          <a href="/crisis" className="card group cursor-pointer block p-4 sm:p-6">
+          <a href="/letters" className="card group cursor-pointer block p-4 sm:p-6">
             <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-pastel-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
-                <FiAlertCircle className="text-white text-xl sm:text-2xl" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-pastel-mint-400 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
+                <FiMail className="text-white text-xl sm:text-2xl" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-base sm:text-xl font-semibold text-gray-700 mb-0.5 sm:mb-1">
-                  Если трудно
+                  Мысли и напутствия
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm">Я здесь в трудные моменты</p>
+                <p className="text-gray-600 text-xs sm:text-sm">Слова, написанные с любовью</p>
               </div>
             </div>
           </a>

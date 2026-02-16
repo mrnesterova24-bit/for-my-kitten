@@ -3,42 +3,47 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Letter } from '@/types';
-import { FiChevronRight } from 'react-icons/fi';
+import { FiChevronRight, FiCloud, FiZap, FiMapPin, FiHeart, FiSun } from 'react-icons/fi';
 
 const categories = [
   {
     id: 'sad',
     title: 'Когда тебе грустно',
-    emoji: '😢',
-    color: 'from-blue-400 to-blue-500',
+    Icon: FiCloud,
+    color: 'bg-pastel-blue-400',
+    iconColor: 'text-white',
     description: 'Для моментов, когда текут слезы',
   },
   {
     id: 'doubt',
     title: 'Когда ты сомневаешься в себе',
-    emoji: '💪',
-    color: 'from-purple-400 to-purple-500',
+    Icon: FiZap,
+    color: 'bg-pastel-purple-400',
+    iconColor: 'text-white',
     description: 'Помни о своей невероятной силе',
   },
   {
     id: 'distance',
     title: 'Когда мы далеко друг от друга',
-    emoji: '🌍',
-    color: 'from-teal-400 to-teal-500',
+    Icon: FiMapPin,
+    color: 'bg-pastel-mint-400',
+    iconColor: 'text-white',
     description: 'Расстояние ничего не значит для нас',
   },
   {
     id: 'argument',
     title: 'Когда мы ссоримся',
-    emoji: '💔',
-    color: 'from-rose-400 to-rose-500',
+    Icon: FiHeart,
+    color: 'bg-pastel-pink-400',
+    iconColor: 'text-white',
     description: 'Даже в конфликте моя любовь остается',
   },
   {
     id: 'happy',
     title: 'Когда ты счастлив',
-    emoji: '🎉',
-    color: 'from-yellow-400 to-yellow-500',
+    Icon: FiSun,
+    color: 'bg-pastel-yellow-500',
+    iconColor: 'text-gray-800',
     description: 'Празднуем твою радость вместе',
   },
 ];
@@ -108,7 +113,9 @@ export default function LettersPage() {
         {/* Category Selection */}
         {!selectedCategory && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
+            {categories.map((category, index) => {
+              const Icon = category.Icon;
+              return (
               <motion.button
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -119,9 +126,9 @@ export default function LettersPage() {
               >
                 <div className="flex items-start gap-4">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow flex-shrink-0`}
+                    className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow flex-shrink-0`}
                   >
-                    <span className="text-3xl">{category.emoji}</span>
+                    <Icon className={`${category.iconColor || 'text-white'} text-2xl`} />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-display font-semibold text-rose-700 mb-2">
@@ -137,7 +144,8 @@ export default function LettersPage() {
                   <FiChevronRight />
                 </div>
               </motion.button>
-            ))}
+            );
+            })}
           </div>
         )}
 
